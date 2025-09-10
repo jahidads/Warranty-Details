@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Warranty Details</title>
+    <link rel="icon" type="image/x-icon" href="https://img.icons8.com/?size=48&id=11808&format=png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            color: white;
+            padding: 25px 0;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .search-box, .category-filter {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box input, .category-filter select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus, .category-filter select:focus {
+            border-color: #4a6491;
+            box-shadow: 0 0 0 2px rgba(74, 100, 145, 0.2);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+            padding: 15px;
+            background: #f9f9f9;
+        }
+
+        .product-card .content {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .product-card p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .product-card .warranty-badge {
+            margin-top: auto;
+            padding: 5px 10px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+            align-self: flex-start;
+        }
+
+        .warranty-details {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .warranty-details.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .warranty-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .warranty-header img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin-right: 20px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .warranty-info {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .warranty-info h2 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .warranty-period {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .warranty-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .feature {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #4a6491;
+            transition: transform 0.3s;
+        }
+
+        .feature:hover {
+            transform: translateY(-3px);
+        }
+
+        .feature h4 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: #2c3e50;
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            align-items: center;
+        }
+
+        .feature h4 i {
+            margin-right: 10px;
+            color: #4a6491;
+        }
+
+        .feature p {
+            font-size: 15px;
+            color: #555;
+        }
+
+        .warranty-terms {
+            margin-top: 30px;
+        }
+
+        .warranty-terms h3 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            align-items: center;
+        }
+
+        .warranty-terms h3 i {
+            margin-right: 10px;
+            color: #4a6491;
+        }
+
+        .terms-list {
+            list-style-type: none;
+        }
+
+        .terms-list li {
+            margin-bottom: 12px;
+            padding-left: 30px;
+            position: relative;
+            font-size: 15px;
+        }
+
+        .terms-list li:before {
+            content: "•";
+            color: #4a6491;
+            font-weight: bold;
+            position: absolute;
+            left: 15px;
+            font-size: 20px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background: #4a6491;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            background: #3a547e;
+        }
+
+        .back-button i {
+            margin-right: 8px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid #eee;
+            margin-top: 30px;
+            background: #f9f9f9;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .warranty-status {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .warranty-status h3 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .status-check {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .status-check input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .status-check button {
+            padding: 12px 25px;
+            background: #4a6491;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .status-check button:hover {
+            background: #3a547e;
+        }
+
+        .status-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .status-result.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .status-valid {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-expired {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            
+            .warranty-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .warranty-header img {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .warranty-info {
+                text-align: center;
+            }
+            
+            .feature {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-shield-alt"></i> Product Warranty Details</h1>
+            <p>Check warranty information for your devices</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="warranty-status">
+            <h3><i class="fas fa-search"></i> Check Warranty Status</h3>
+            <div class="status-check">
+                <input type="text" id="serialNumber" placeholder="Enter product serial number">
+                <button id="checkStatus"><i class="fas fa-check-circle"></i> Check Status</button>
+            </div>
+            <div id="statusResult" class="status-result"></div>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search for a product...">
+            </div>
+            <div class="category-filter">
+                <select id="categoryFilter">
+                    <option value="all">All Categories</option>
+                    <option value="Smartphone">Smartphones</option>
+                    <option value="Laptop">Laptops</option>
+                    <option value="Audio">Audio</option>
+                    <option value="Wearables">Wearables</option>
+                    <option value="Accessories">Accessories</option>
+                    <option value="Computer Accessories">Computer Accessories</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="products-grid" id="productsGrid">
+            <!-- Product cards will be generated here -->
+        </div>
+
+        <div class="warranty-details" id="warrantyDetails">
+            <!-- Warranty details will be shown here -->
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 Warranty Portal. Design by Your 💖Jahid Hasan.</p>
+            <p>Warranty information is provided for informational purposes only. For official warranty terms, please refer to the manufacturer's documentation.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Product data with warranty information
+        const products = [
+            {
+                id: "mouse",
+                name: "Computer Mouse",
+                category: "Computer Accessories",
+                warrantyPeriod: "2 Years",
+                coverage: "Hardware defects and malfunctions",
+                limitations: "Excludes physical damage and wear-and-tear",
+                registration: "Not required",
+                support: "Email and phone support",
+                image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fG1vdXNlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
+                supportPhone: "1-800-123-4567",
+                website: "https://www.razer.com/pc/gaming-mice",
+                additionalInfo: "Includes free shipping for warranty claims"
+            },
+            {
+                id: "earbuds",
+                name: "Wireless Earbuds",
+                category: "Audio",
+                warrantyPeriod: "1 Year",
+                coverage: "Manufacturing defects and battery issues",
+                limitations: "Excludes water damage and lost earbuds",
+                registration: "Required for full coverage",
+                support: "Online support and replacement",
+                image: "https://images.unsplash.com/photo-1572536147248-ac59a8abfa4b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fGVhcmJ1ZHN8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60",
+                supportPhone: "1-800-234-5678",
+                website: "https://www.qcy.com/",
+                additionalInfo: "Battery replacement available after warranty expires"
+            },
+            {
+                id: "laptop",
+                name: "Laptop Computer",
+                category: "Laptops",
+                warrantyPeriod: "3 Years",
+                coverage: "Parts and labor for hardware defects",
+                limitations: "Excludes software issues and accidental damage",
+                registration: "Required within 30 days of purchase",
+                support: "On-site service available",
+                image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bGFwdG9wfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
+                supportPhone: "1-800-345-6789",
+                website: "https://www.lenovo.com/bd/en/",
+                additionalInfo: "Extended warranty options available"
+            },
+            {
+                id: "oneplus12",
+                name: "OnePlus 12",
+                category: "Smartphone",
+                warrantyPeriod: "2 Years",
+                coverage: "Hardware defects and battery degradation below 80%",
+                limitations: "Excludes screen damage and cosmetic wear",
+                registration: "Automatic with purchase",
+                support: "Priority phone support",
+                image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8c21hcnRwaG9uZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
+                supportPhone: "1-800-456-7890",
+                website: "https://oneplus.com",
+                additionalInfo: "Includes 6 months of screen protection"
+            },
+            {
+                id: "portable-charger",
+                name: "Portable Charger",
+                category: "Accessories",
+                warrantyPeriod: "18 Months",
+                coverage: "Battery capacity and charging circuit",
+                limitations: "Excludes cable damage and physical abuse",
+                registration: "Optional for extended support",
+                support: "Email support and replacement",
+                image: "https://cdn.pixabay.com/photo/2016/09/29/12/27/mobile-1702720_640.jpg",
+                supportPhone: "1-800-567-8901",
+                website: "https://www.startech.com.bd/power-bank",
+                additionalInfo: "30-day money-back guarantee"
+            },
+            {
+                id: "jbl-charger5",
+                name: "JBL Charge 5",
+                category: "Audio",
+                warrantyPeriod: "1 Year",
+                coverage: "Manufacturing defects and battery issues",
+                limitations: "Excludes water damage beyond IPX7 rating",
+                registration: "Recommended for faster service",
+                support: "Online support and repair centers",
+                image: "https://cdn.pixabay.com/photo/2020/04/22/12/11/brand-5077789_640.jpg",
+                supportPhone: "1-800-678-9012",
+                website: "https://www.jbl.com",
+                additionalInfo: "Water damage indicators void warranty if triggered"
+            },
+            {
+                id: "asus-rog-g16",
+                name: "ASUS ROG G16",
+                category: "Laptops",
+                warrantyPeriod: "2 Years",
+                coverage: "Hardware components and performance issues",
+                limitations: "Excludes overclocking damage and cosmetic issues",
+                registration: "Required for warranty validation",
+                support: "Dedicated gaming support line",
+                image: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fGdhbWluZyUyMGxhcHRvcHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
+                supportPhone: "1-800-789-0123",
+                website: "https://asus.com",
+                additionalInfo: "Includes 1 year of accidental damage protection"
+            },
+            {
+                id: "google-pixel8",
+                name: "Google Pixel 8 Pro",
+                category: "Smartphone",
+                warrantyPeriod: "2 Years",
+                coverage: "Hardware defects and software support",
+                limitations: "Excludes physical damage and unauthorized modifications",
+                registration: "Automatic with Google account",
+                support: "24/7 chat and phone support",
+                image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c21hcnRwaG9uZSUyMHBpeGVsfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
+                supportPhone: "1-800-890-1234",
+                website: "https://store.google.com",
+                additionalInfo: "Free replacement for manufacturing defects"
+            },
+            {
+                id: "apple-watch",
+                name: "Apple Watch",
+                category: "Wearables",
+                warrantyPeriod: "1 Year",
+                coverage: "Manufacturing defects and battery issues",
+                limitations: "Excludes cosmetic damage and band wear",
+                registration: "Automatic with Apple ID",
+                support: "Apple Store and online support",
+                image: "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YXBwbGUlMjB3YXRjaHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
+                supportPhone: "1-800-901-2345",
+                website: "https://apple.com",
+                additionalInfo: "Battery service available for out-of-warranty devices"
+            },
+            {
+                id: "sony-wh1000xm5",
+                name: "Sony WH-1000XM5",
+                category: "Audio",
+                warrantyPeriod: "2 Years",
+                coverage: "Hardware defects and noise cancellation",
+                limitations: "Excludes physical damage and accessory wear",
+                registration: "Required for warranty service",
+                support: "Authorized service centers",
+                image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGVhZHBob25lc3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
+                supportPhone: "1-800-012-3456",
+                website: "https://sony.com",
+                additionalInfo: "Free firmware updates during warranty period"
+            },
+            {
+                id: "dell-xps13",
+                name: "Dell XPS 13",
+                category: "Laptops",
+                warrantyPeriod: "4 Years",
+                coverage: "Hardware defects and on-site service",
+                limitations: "Excludes software issues and accidental damage",
+                registration: "Required for premium support",
+                support: "24/7 pro support and on-site service",
+                image: "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fGxhcHRvcHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
+                supportPhone: "1-800-123-4567",
+                website: "https://dell.com",
+                additionalInfo: "Next business day on-site service available"
+            },
+            {
+                id: "samsung-s24",
+                name: "Samsung Galaxy S24",
+                category: "Smartphone",
+                warrantyPeriod: "2 Years",
+                coverage: "Manufacturing defects and battery issues",
+                limitations: "Excludes screen burn-in and physical damage",
+                registration: "Automatic with Samsung account",
+                support: "Samsung support centers",
+                image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTZ8fHNhbXN1bmclMjBwaG9uZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
+                supportPhone: "1-800-234-5678",
+                website: "https://samsung.com",
+                additionalInfo: "Free screen replacement for manufacturing defects"
+            },
+            {
+                id: "magsafe-charger",
+                name: "MagSafe Charger",
+                category: "Accessories",
+                warrantyPeriod: "1 Year",
+                coverage: "Charging functionality and cable defects",
+                limitations: "Excludes physical damage and wear from use",
+                registration: "Not required",
+                support: "Apple support channels",
+                image: "https://cdn.pixabay.com/photo/2016/11/29/13/38/black-and-white-1869912_640.jpg",
+                supportPhone: "1-800-345-6789",
+                website: "https://www.belkin.com/products/wireless-chargers/magsafe-chargers-accessories/",
+                additionalInfo: "Compatible with all MagSafe devices"
+            },
+            {
+                id: "airpods-pro",
+                name: "AirPods Pro",
+                category: "Audio",
+                warrantyPeriod: "1 Year",
+                coverage: "Battery and hardware defects",
+                limitations: "Excludes lost units and physical damage",
+                registration: "Automatic with Apple ID",
+                support: "Apple Store and online support",
+                image: "https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8YWlycG9kc3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
+                supportPhone: "1-800-456-7890",
+                website: "https://www.apple.com/airpods-pro/",
+                additionalInfo: "Battery service available for out-of-warranty devices"
+            },
+            {
+                id: "macbook-pro-m3",
+                name: "MacBook Pro M3",
+                category: "Laptops",
+                warrantyPeriod: "1 Year",
+                coverage: "Hardware defects and manufacturing issues",
+                limitations: "Excludes accidental damage and cosmetic issues",
+                registration: "Automatic with Apple ID",
+                support: "Apple premium support",
+                image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8bGFwdG9wfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
+                supportPhone: "1-800-567-8901",
+                website: "https://www.apple.com/macbook-pro/",
+                additionalInfo: "AppleCare+ available for extended coverage"
+            },
+            {
+                id: "iphone15-pro",
+                name: "iPhone 15 Pro",
+                category: "Smartphone",
+                warrantyPeriod: "1 Year",
+                coverage: "Hardware defects and battery issues",
+                limitations: "Excludes screen damage and water intrusion",
+                registration: "Automatic with Apple ID",
+                support: "Apple Store and online support",
+                image: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTZ8fGlwaG9uZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
+                supportPhone: "1-800-678-9012",
+                website: "https://apple.com",
+                additionalInfo: "Screen repair service available at additional cost"
+            }
+        ];
+
+        // Generate product cards
+        const productsGrid = document.getElementById('productsGrid');
+        const warrantyDetails = document.getElementById('warrantyDetails');
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const checkStatusBtn = document.getElementById('checkStatus');
+        const serialNumberInput = document.getElementById('serialNumber');
+        const statusResult = document.getElementById('statusResult');
+
+        function renderProducts(productsArray) {
+            productsGrid.innerHTML = '';
+            
+            if (productsArray.length === 0) {
+                productsGrid.innerHTML = '<p class="no-products">No products found. Try a different search.</p>';
+                return;
+            }
+            
+            productsArray.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}">
+                    <div class="content">
+                        <h3>${product.name}</h3>
+                        <p>${product.category}</p>
+                        <span class="warranty-badge">${product.warrantyPeriod}</span>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => showWarrantyDetails(product));
+                productsGrid.appendChild(card);
+            });
+        }
+
+        function showWarrantyDetails(product) {
+            warrantyDetails.innerHTML = `
+                <div class="back-button" id="backButton">
+                    <i class="fas fa-arrow-left"></i> Back to Products
+                </div>
+                
+                <div class="warranty-header">
+                    <img src="${product.image}" alt="${product.name}">
+                    <div class="warranty-info">
+                        <h2>${product.name}</h2>
+                        <span class="warranty-period">${product.warrantyPeriod} Warranty</span>
+                        <p>Category: ${product.category}</p>
+                        <p>Support: ${product.supportPhone}</p>
+                        <p>Website: <a href="${product.website}" target="_blank">${product.website}</a></p>
+                    </div>
+                </div>
+                
+                <div class="warranty-features">
+                    <div class="feature">
+                        <h4><i class="fas fa-check-circle"></i> Coverage</h4>
+                        <p>${product.coverage}</p>
+                    </div>
+                    <div class="feature">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Limitations</h4>
+                        <p>${product.limitations}</p>
+                    </div>
+                    <div class="feature">
+                        <h4><i class="fas fa-clipboard-check"></i> Registration</h4>
+                        <p>${product.registration}</p>
+                    </div>
+                    <div class="feature">
+                        <h4><i class="fas fa-headset"></i> Support</h4>
+                        <p>${product.support}</p>
+                    </div>
+                </div>
+                
+                <div class="feature">
+                    <h4><i class="fas fa-info-circle"></i> Additional Information</h4>
+                    <p>${product.additionalInfo}</p>
+                </div>
+                
+                <div class="warranty-terms">
+                    <h3><i class="fas fa-file-contract"></i> Standard Warranty Terms</h3>
+                    <ul class="terms-list">
+                        <li>Warranty applies only to defects in materials and workmanship</li>
+                        <li>Proof of purchase is required for all warranty claims</li>
+                        <li>Warranty is non-transferable to other owners</li>
+                        <li>Service options may vary based on country of purchase</li>
+                        <li>Warranty does not apply to products purchased from unauthorized retailers</li>
+                        <li>Manufacturer reserves the right to repair or replace the product</li>
+                        <li>Warranty does not cover data loss or recovery</li>
+                        <li>Any modifications to the product will void the warranty</li>
+                    </ul>
+                </div>
+            `;
+            
+            warrantyDetails.classList.add('active');
+            
+            // Scroll to warranty details
+            warrantyDetails.scrollIntoView({ behavior: 'smooth' });
+            
+            // Add event listener to back button
+            document.getElementById('backButton').addEventListener('click', () => {
+                warrantyDetails.classList.remove('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        // Search functionality
+        searchInput.addEventListener('input', filterProducts);
+        
+        // Category filter functionality
+        categoryFilter.addEventListener('change', filterProducts);
+        
+        function filterProducts() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const category = categoryFilter.value;
+            
+            const filteredProducts = products.filter(product => {
+                const matchesSearch = product.name.toLowerCase().includes(searchTerm) || 
+                                    product.category.toLowerCase().includes(searchTerm);
+                const matchesCategory = category === 'all' || product.category === category;
+                
+                return matchesSearch && matchesCategory;
+            });
+            
+            renderProducts(filteredProducts);
+        }
+
+        // Warranty status check
+        checkStatusBtn.addEventListener('click', () => {
+            const serialNumber = serialNumberInput.value.trim();
+            
+            if (serialNumber === '') {
+                statusResult.textContent = 'Please enter a serial number';
+                statusResult.className = 'status-result status-expired active';
+                return;
+            }
+            
+            // Simulate status check (random result)
+            const isValid = Math.random() > 0.5;
+            
+            if (isValid) {
+                const monthsRemaining = Math.floor(Math.random() * 24);
+                statusResult.innerHTML = `
+                    <p><i class="fas fa-check-circle"></i> <strong>Warranty is valid!</strong></p>
+                    <p>Your product warranty is active and has approximately ${monthsRemaining} months remaining.</p>
+                    <p>Coverage until: ${new Date(Date.now() + monthsRemaining * 30 * 24 * 60 * 60 * 1000).toLocaleDateString()}</p>
+                `;
+                statusResult.className = 'status-result status-valid active';
+            } else {
+                statusResult.innerHTML = `
+                    <p><i class="fas fa-exclamation-circle"></i> <strong>Warranty has expired</strong></p>
+                    <p>Your product warranty is no longer active. Please contact support for repair options.</p>
+                `;
+                statusResult.className = 'status-result status-expired active';
+            }
+        });
+
+        // Initial render
+        renderProducts(products);
+    </script>
+</body>
+</html>
